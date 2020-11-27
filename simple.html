@@ -1,0 +1,154 @@
+<!DOCTYPE html>
+<html lang="ja">
+
+<head>
+  <meta charset="utf-8" />
+  <title>Chatアプリ</title>
+  <style>
+    /* この中にcssをかけます */
+  </style>
+</head>
+
+<body>
+  <!-- ブラウザの画面に見える内容 -->
+
+  <div>
+    <!-- 名前 -->
+    名前
+    <input type="text" id="username">
+  </div>
+
+  <div>
+    <!-- テキストエリア -->
+    テキスト
+    <textarea name="" id="text" cols="30" rows="10"></textarea>
+  </div>
+
+
+  <input type="date" id="today">
+
+
+  <div>
+    <!-- 送信ボタン -->
+    <button id="send">送信</button>
+  </div>
+
+  <div>
+    <!-- 保存されたデータが表示される箇所 -->
+    <div id="output"></div>
+  </div>　　　　
+
+  <!--/ ブラウザの画面に見える内容 -->
+
+  <!-- JQuery -->
+  <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.4.1/jquery.min.js"></script>
+
+  <!--** 以下Firebase **-->
+  <!-- The core Firebase JS SDK is always required and must be listed first -->
+  <!-- ここにfirebaseのscriptを貼り付ける -->
+  <script src="https://www.gstatic.com/firebasejs/7.14.2/firebase.js"></script>
+
+  <script>
+    // Your web app's Firebase configuration
+    var firebaseConfig = {
+      apiKey: "AIzaSyA97jGNYCV4qg22Mw2T-vpye_pg79KUvl4",
+      authDomain: "dev18-chat-52211.firebaseapp.com",
+      databaseURL: "https://dev18-chat-52211.firebaseio.com",
+      projectId: "dev18-chat-52211",
+      storageBucket: "dev18-chat-52211.appspot.com",
+      messagingSenderId: "60538439308",
+      appId: "1:60538439308:web:35ea5703fc1c06a2051da9"
+    };
+    // Initialize Firebase
+    firebase.initializeApp(firebaseConfig);
+
+    //firebaseのデーターベース（保存させる場所）を使いますよと言うjsのコードを貼り付ける
+    // xxxxxスクリプトを貼り付ける
+    const newPostRef = firebase.database().ref();
+    
+    // ここから下にjqueryの処理を書いて練習します
+
+    window.onload = function () {
+            //今日の日時を表示
+            var date = new Date()
+            var year = date.getFullYear()
+            var month = date.getMonth() + 1
+            var day = date.getDate()
+          
+            var toTwoDigits = function (num, digit) {
+              num += ''
+              if (num.length < digit) {
+                num = '0' + num
+              }
+              return num
+            }
+            
+            var yyyy = toTwoDigits(year, 4)
+            var mm = toTwoDigits(month, 2)
+            var dd = toTwoDigits(day, 2)
+            var ymd = yyyy + "-" + mm + "-" + dd;
+            
+            document.getElementById("today").value = ymd;
+        }
+
+
+
+
+
+    // 送信ボタンをクリックされたら次の処理をする
+    
+    $("#send").on("click", function () {
+
+      // データを登録で送る
+      newPostRef.push({
+        //名前
+        username:$("#username").val(),
+        //テキストエリア
+        text:$("#text").val(),
+
+        // 時間
+        date:$("#today").val()
+
+
+
+      })
+      // 文字を空にする
+      $("#username").val(""); //空にする
+      $("#text").val(""); //空にする
+
+
+    // document.write(hour+":",+minute);
+    // console.log(hour+":",+minute);      
+     
+
+    });
+
+    // 受信処理
+    newPostRef.on("child_added", function (data) {
+      let v = data.val();//ここに保存されたデータが全て入ってくる
+      // function (data)のdataにfirebaseのデータが入ってくる
+
+      // let k = data.key; //今回は使いません
+
+      //console.logで受信=firebaseに登録されている中身を確認しよう！
+       console.log(v);
+      //テンプレートリテラル `` を活用して変数にhtmlを埋め込もう！ 
+      let str = `<p>${v.username}<br>${v.text}<br>${v.date}</p>`;
+
+      // ここでデータをhtmlに埋め込む prependには変数を埋め込もう！
+      $("#output").prepend(str);
+
+
+    });
+
+     $("#XXX").on("keydown", function (event) {
+
+      // eventの中身をconsole.logでみてみよう！
+    })
+
+
+    
+  </script>
+</body>
+
+</html>
